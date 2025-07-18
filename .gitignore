@@ -1,0 +1,21 @@
+# Byte-compiled files
+*.pyc
+__pycache__/
+
+# Ignore all migration files
+**/migrations/*
+
+# But keep the __init__.py file in migrations
+!**/migrations/__init__.py
+
+# Virtual environment
+venv/
+env/
+app/
+
+# VS Code settings
+.vscode/
+
+# DB or local config
+*.sqlite3
+.env

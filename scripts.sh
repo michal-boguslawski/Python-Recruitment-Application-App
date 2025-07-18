@@ -1,0 +1,1 @@
+docker run --name RecrAppDB -p 5432:5432 -e POSTGRES_PASSWORD=admin -e POSTGRES_DB=RecrAppDB -d postgres:17.5-alpine3.22

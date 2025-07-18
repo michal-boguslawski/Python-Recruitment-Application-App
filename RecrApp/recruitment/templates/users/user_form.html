@@ -1,0 +1,38 @@
+{% extends "form_base.html" %}
+
+{% block title %}
+    {% if title %}
+        {{title}}
+    {% else %}
+        Register User
+    {% endif %}
+{% endblock title %}
+
+{% block form_title %}
+    {% if title %}
+        {{title}}
+    {% else %}
+        Register User
+    {% endif %}
+{% endblock form_title %}
+
+{% block form_fields %}
+    {% csrf_token %}
+    <table>
+    {% for field in form %}
+        <tr>
+        <td style="text-align: left; padding: 5px;">{{ field.label_tag }}</td>
+        <td style="text-align: left; padding: 5px;">{{ field }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+    {% if error %}
+        <ul style="color: red;text-align: left; padding: 5px;">
+            {% for field, errors in error.items %}
+                {% for err in errors %}
+                    <strong>{{ field }}:</strong> {{ err }}
+                {% endfor %}
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock form_fields %}
