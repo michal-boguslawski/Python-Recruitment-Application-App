@@ -24,10 +24,8 @@ class UserCreateView(View):
 
         if form.is_valid():
             user = form.save()
-            # user_data = data_form.save(commit=False)
-            # user_data.credential = credentials
-            # user_data.save()
-            return redirect('user_success')  # Replace with your success URL or view name
+            # authentication using email
+            return redirect('home')  # Replace with your success URL or view name
         else:
             error = form.errors
 
@@ -51,7 +49,7 @@ def login_view(request):
             if user is not None:
                 login(request, user)
                 
-                return redirect('login_success')  # change 'home' to your success URL
+                return redirect('edit_profile')  # change 'home' to your success URL
             else:
                 error = "Invalid login or password"
     else:
