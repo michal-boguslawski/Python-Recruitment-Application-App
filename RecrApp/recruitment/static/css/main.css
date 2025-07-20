@@ -3,6 +3,19 @@ html, body {
     margin: 0;
 }
 
+.form-errors {
+    color: red;
+    background-color: #fff4f4;
+    border: 1px solid #e0a0a0;
+    padding: 5px;
+    margin-bottom: 10px;
+    text-align: justify;
+}
+
+.form-errors p {
+    margin: 2px 0;  /* smaller vertical spacing */
+}
+
 .form-container {
   width: 350px;      /* match your inline width */
   margin: 0 auto;    /* center horizontally */

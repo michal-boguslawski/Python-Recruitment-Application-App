@@ -7,6 +7,14 @@
         <form method="post">
             {% csrf_token %}
             {% block form_fields %}{% endblock form_fields %}
+
+                {% if form.errors %}
+                    <div class="form-errors">
+                        {% for field, errors in form.errors.items %}
+                            <p><strong>{{ field|capfirst }}:</strong> {{ errors|striptags }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             
             <div class="form-buttons">
                 <button type="submit" class="btn-submit">
@@ -19,5 +27,6 @@
         </form>
     </div>
 </div>
+
 
 {% endblock content %}

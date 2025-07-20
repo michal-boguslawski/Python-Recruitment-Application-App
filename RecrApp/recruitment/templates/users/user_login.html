@@ -2,7 +2,13 @@
 
 {% block title %}Login User{% endblock title %}
 
-{% block form_title %}Login to Your Account{% endblock form_title %}
+{% block form_title %}
+    {% if title %}
+        {{ title }}
+    {% else %}
+        Custom Title
+    {% endif %}
+{% endblock form_title %}
 
 {% block form_fields %}
     <table id="register-form" style="margin: 0 auto;">
@@ -13,10 +19,5 @@
         </tr>
     {% endfor %}
     </table>
-    {% if error %}
-        <ul style="color: red;text-align: left; padding: 5px;">
-            {{ error }}
-        </ul>
-    {% endif %}
 {% endblock form_fields %}
 

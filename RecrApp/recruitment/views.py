@@ -1,84 +1,58 @@
 # views.py
 from django.views import View
-from django.views.generic import TemplateView
-from django.shortcuts import render, redirect
-from .forms import LoginForm, UserForm, UserProfileForm
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.decorators import login_required
-from .models import Application, ApplicationLink
+from django.shortcuts import render
+from .models import ApplicationLink
 from .utils import recursive_model_to_dict, explode_dict
+from django.contrib.auth.views import LoginView
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.urls import reverse_lazy, reverse
+from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic import ListView
+from django.contrib.auth.models import Group
 
-class UserCreateView(View):
-    def get(self, request):
-        error = None
-        form = UserForm()
-        # data_form = UserDataForm()
-        return render(request, 'users/user_form.html', {
-            'form': form,
-            'error': error
-        })
+class CustomLoginView(LoginView):
+    template_name = 'users/user_login.html'
+    redirect_authenticated_user = True
+    
+    def get_success_url(self):
+        return self.request.GET.get('next') or reverse('user_applications')
+    
+class CustomUserChangeForm(UpdateView):
+    form_class = UserChangeForm
+    template_name = 'users/user_login.html'
+    success_url = reverse_lazy('user_applications')  # Or whatever your success url is
 
-    def post(self, request):
-        error = None
-        form = UserForm(request.POST)
-
-        if form.is_valid():
-            user = form.save()
-            # authentication using email
-            return redirect('home')  # Replace with your success URL or view name
-        else:
-            error = form.errors
-
-        return render(request, 'users/user_form.html', {
-            'form': form,
-            'error': error
-        })
+    def get_object(self, queryset=None):
+        # Return the currently logged-in user
+        return self.request.user
+    
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        allowed_fields = ['first_name', 'last_name', 'email']
+        for field_name in list(form.fields):
+            if field_name not in allowed_fields:
+                form.fields.pop(field_name)
+        return form
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Fill in informations'  # Add extra context here
+        return context
+    
+class RegisterView(CreateView):
+    form_class = UserCreationForm
+    template_name = 'users/user_form.html'
+    success_url = reverse_lazy('edit_profile')
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        group = Group.objects.get(name='Customer')
+        self.object.groups.add(group)
+        return response
 
     
 def home(request):
     return render(request, "home.html")
 
-def login_view(request):
-    error = None
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data['login']
-            password = form.cleaned_data['password']
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                login(request, user)
-                
-                return redirect('edit_profile')  # change 'home' to your success URL
-            else:
-                error = "Invalid login or password"
-    else:
-        form = LoginForm()
-    return render(request, 'users/user_login.html', {'form': form, 'error': error})
-
-def login_success(request):
-    print(request.session.keys())
-    print(request.session.get('_auth_user_id'))
-    print(request.user.username)
-    print(request.user.is_authenticated)
-    # return render(request, "users/user_login_success.html")
-    return redirect('edit_profile')
-
-@login_required
-def edit_profile(request):
-    user = request.user  # Current logged-in user
-    error = None
-    if request.method == 'POST':
-        form = UserProfileForm(request.POST, instance=user)
-        if form.is_valid():
-            form.save()
-            return redirect('home')
-        else:
-            error = form.errors
-    else:
-        form = UserProfileForm(instance=user)
-
-    return render(request, 'users/user_form.html', {'form': form, 'error': error, 'title': 'Edit user'})
 
 def user_menu(request):
     pass
@@ -94,18 +68,12 @@ class ApplicationCreateView(View):
 
     def post(self, request):
         pass
-    
-class ListApplicationsView(View):
-    def get(self, request):
-        # user = request.user
-        error = None
-        # get_context_data
-        application_links = ApplicationLink.objects.select_related(
-            'user', 'job_posting', 'application'
-        ).all()
-        app_dict = [explode_dict(recursive_model_to_dict(obj)) for obj in application_links]
-        
-        return render(request, 'recr_app/applications.html', {'info': app_dict, 'error': error})
-    
-def test(request):
-    return render(request, 'recr_app/recr_app_base.html')
+
+
+class UserApplicationsListView(ListView):
+    model = ApplicationLink
+    template_name = 'applications/user_applications.html'
+    # context_object_name = 'applications'
+
+    def get_queryset(self):
+        return ApplicationLink.objects.filter(user=self.request.user)
