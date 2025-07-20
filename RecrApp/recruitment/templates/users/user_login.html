@@ -13,5 +13,10 @@
         </tr>
     {% endfor %}
     </table>
+    {% if error %}
+        <ul style="color: red;text-align: left; padding: 5px;">
+            {{ error }}
+        </ul>
+    {% endif %}
 {% endblock form_fields %}
 

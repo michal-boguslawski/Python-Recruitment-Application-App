@@ -3,10 +3,10 @@ from django.views import View
 from django.views.generic import TemplateView
 from django.shortcuts import render, redirect
 from .forms import LoginForm, UserForm, UserProfileForm
-from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-# from .models import UserCredentials, UserData
+from .models import Application, ApplicationLink
+from .utils import recursive_model_to_dict, explode_dict
 
 class UserCreateView(View):
     def get(self, request):
@@ -54,7 +54,6 @@ def login_view(request):
                 error = "Invalid login or password"
     else:
         form = LoginForm()
-    
     return render(request, 'users/user_login.html', {'form': form, 'error': error})
 
 def login_success(request):
@@ -70,10 +69,8 @@ def edit_profile(request):
     user = request.user  # Current logged-in user
     error = None
     if request.method == 'POST':
-        print("Post")
         form = UserProfileForm(request.POST, instance=user)
         if form.is_valid():
-            print("Post2")
             form.save()
             return redirect('home')
         else:
@@ -97,3 +94,18 @@ class ApplicationCreateView(View):
 
     def post(self, request):
         pass
+    
+class ListApplicationsView(View):
+    def get(self, request):
+        # user = request.user
+        error = None
+        # get_context_data
+        application_links = ApplicationLink.objects.select_related(
+            'user', 'job_posting', 'application'
+        ).all()
+        app_dict = [explode_dict(recursive_model_to_dict(obj)) for obj in application_links]
+        
+        return render(request, 'recr_app/applications.html', {'info': app_dict, 'error': error})
+    
+def test(request):
+    return render(request, 'recr_app/recr_app_base.html')

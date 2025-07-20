@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block statics %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/recr_app.css' %}">
+{% endblock statics %}
+
+{% block content %}
+<div class="tabs">
+    <div class="tab active" data-tab="home">Applications</div>
+    <div class="tab" data-tab="about">Resumes</div>
+    <div class="tab" data-tab="contact">Edit User</div>
+</div>
+
+<div class="main-content">
+    {% block forms_content %} {% endblock forms_content %}
+</div>
+
+
+{% endblock content %}

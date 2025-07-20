@@ -1,0 +1,66 @@
+[
+  {
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+      "username": "johndoe",
+      "password": "pbkdf2_sha256$260000$abc$examplehash", 
+      "email": "johndoe@example.com",
+      "first_name": "John",
+      "last_name": "Doe"
+    }
+  },
+  {
+    "model": "recruitment.socialmedialink",
+    "pk": 1,
+    "fields": {
+      "user": 1,
+      "platform_name": "LinkedIn",
+      "link": "https://linkedin.com/in/johndoe"
+    }
+  },
+  {
+    "model": "recruitment.resume",
+    "pk": 1,
+    "fields": {
+      "user": 1,
+      "link": "https://resumes.example.com/johndoe_resume.pdf"
+    }
+  },
+  {
+    "model": "recruitment.jobposting",
+    "pk": 1,
+    "fields": {
+      "company_name": "TechCorp",
+      "job_position": "Software Engineer",
+      "work_mode": "hybrid",
+      "work_location": "New York",
+      "termination_date": "2025-12-31"
+    }
+  },
+  {
+    "model": "recruitment.application",
+    "pk": 1,
+    "fields": {
+      "resume": 1,
+      "application_status": "interview"
+    }
+  },
+  {
+    "model": "recruitment.applicationlink",
+    "pk": 1,
+    "fields": {
+      "user": 1,
+      "job_posting": 1,
+      "application": 1
+    }
+  },
+  {
+    "model": "recruitment.interviewsdetail",
+    "pk": 1,
+    "fields": {
+      "application": 1,
+      "interview_date": "2025-08-15"
+    }
+  }
+]
