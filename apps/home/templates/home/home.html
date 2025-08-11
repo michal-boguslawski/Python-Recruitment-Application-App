@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %} Home Page {% endblock title %}
+
+{% block content %}
+
+<nav class="navbar navbar-expand-lg bg-body-tertiary rounded-5 mt-1 ms-2 me-2">
+  <div class="container-fluid">
+    <a class="navbar-brand ms-2" href={% url 'home:home' %}>Home</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        {% if not user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" aria-current="page" href={% url 'users:login' %}>Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href={% url 'users:register' %}>Register</a>
+          </li>
+        {% endif %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Dropdown
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#">Action</a></li>
+            <li><a class="dropdown-item" href="#">Another action</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#">Something else here</a></li>
+          </ul>
+        </li>
+      </ul>
+      <div  class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <form class="d-flex" role="search">
+          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
+          <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
+        
+        {% if user.is_authenticated %}
+          <li class="nav-item">
+            <form method="post" action="{% url 'users:logout' %}">
+              {% csrf_token %}
+              <button type="submit" class="nav-link btn btn-link">
+                Logout
+              </button>
+            </form>
+          </li>
+        {% endif %}
+      </div>
+      
+    </div>
+  </div>
+</nav>
+
+    {% block home_content %} {% endblock home_content %}
+{% endblock content %}
