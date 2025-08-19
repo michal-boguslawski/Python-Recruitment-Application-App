@@ -1,6 +1,10 @@
 from django.urls import path
-from .views import jobs_home
+from django.shortcuts import render
+
+from .views import ListJobApplicationView, CreateJobApplicationView
 
 urlpatterns = [
-    path('', jobs_home, name='home'),
+    path('', lambda request: render(request, template_name='jobs/home.html'), name='home'),
+    path('list/', ListJobApplicationView.as_view(), name='list_of_applications'),
+    path('create/', CreateJobApplicationView.as_view(), name='create_application')
 ]

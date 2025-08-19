@@ -1,6 +1,6 @@
-{% extends "home/home.html" %}
+{% extends "users/before_login_base.html" %}
 
-{% block home_content %}
+{% block main_content %}
 
 <form method="post" enctype="multipart/form-data" class="border rounded-5 p-4 mx-auto bg-light mt-4" style="max-width: 600px;">
     {% csrf_token %}
@@ -63,4 +63,4 @@
 
 {{ form.errors }}
 
-{% endblock home_content %}
+{% endblock main_content %}

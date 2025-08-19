@@ -1,6 +1,6 @@
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.models import User
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
 from django.shortcuts import render, redirect
@@ -29,6 +29,13 @@ class CustomLoginView(LoginView):
         context['title'] = 'Please Log In'
         context['button_info'] = 'Log In'
         return context
+    
+class CustomLogoutView(LogoutView):
+    success_url = reverse_lazy('home:home')
+    
+    def get_success_url(self):
+        return reverse_lazy('home:home')
+    
 
 class CustomRegisterView(FormView):
     form_class = CustomUserCreationForm

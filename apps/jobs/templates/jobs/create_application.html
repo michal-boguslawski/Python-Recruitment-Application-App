@@ -1,0 +1,171 @@
+{% extends "users/after_login_base.html" %}
+{% load static %}
+
+{% block specific_css_block %}
+    <link rel="stylesheet" type="text/css" href="{% static 'jobs/css/styles.css' %}">
+{% endblock specific_css_block %}
+
+{% block main_content %}
+<form method="post" class="border rounded-5 p-4 mx-auto bg-light mt-4" style="max-width: 800px;">
+    {% csrf_token %}
+    <div class="container-lg border rounded-5 p-4 bg-white mb-2">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="{{ form.job_name.id_for_label }}" class="form-label">Job Title</label>
+                <input type="text" name="job_name" id="job_name" class="form-control">
+            </div>
+            <div class="col-md-6">
+                <label for="{{ form.company.id_for_label }}" class="form-label">Company Name</label>
+                <input type="text" name="company" id="company" class="form-control">
+            </div>
+        </div>
+        
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="{{ form.country.id_for_label }}" class="form-label">Country</label>
+                {{ form.country }}
+            </div>
+            <div class="col-md-6">
+                <label for="{{ form.city.id_for_label }}" class="form-label">City</label>
+                {{ form.city }}
+            </div>
+        </div>
+        
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <label for="{{ form.apply_date.id_for_label }}" class="form-label">Application Date</label>
+                {{ form.apply_date }}
+            </div>
+            <div class="col-md-3">
+                <label for="{{ form.city.id_for_label }}" class="form-label">Job Offer Valid To</label>
+                {{ form.valid_to }}
+            </div>
+            <div class="col-md-6">
+                <label for="{{ form.link.id_for_label }}" class="form-label">Link</label>
+                <input type="url" name="link" id="link" class="form-control">
+            </div>
+        </div>
+        
+        <div class="row mb-3 justify-content-center">
+            <div class="col-md-3">
+                <label for="{{ form.status.id_for_label }}" class="form-label">Application Status</label>
+                {{ form.status }}
+            </div>
+            <div class="col-md-3">
+                <label for="{{ form.portal.id_for_label }}" class="form-label">Portal</label>
+                <input type="text" name="portal" id="portal" class="form-control">
+            </div>
+        </div>
+
+    </div>
+
+    <div class="d-flex align-items-center justify-content-between mb-2 toggle-details" 
+        data-bs-toggle="collapse" href="#collapseExample" role="button" 
+        aria-expanded="false" aria-controls="collapseExample" id="toggleDetails">
+        <span>
+            <i id="arrowIcon" class="bi bi-caret-right"></i>
+            Add details
+        </span>
+        <hr class="flex-grow-1 ms-2 my-0">
+    </div>
+    
+    <div class="collapse" id="collapseExample">
+        <div class="container-lg border rounded-5 p-4 bg-white mb-2">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="{{ form.job_application_body.id_for_label }}" class="form-label">Job Description</label>
+                    {{ second_form.job_application_body }}
+                </div>
+                <div class="col-md-6">
+                    <label for="{{ form.comments.id_for_label }}" class="form-label">Comments</label>
+                    {{ second_form.comments }}
+                </div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Resume</label>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="resumeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            Select resume
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="resumeDropdown">
+                            <!-- Upload new -->
+                            <li>
+                                <a class="dropdown-item" href="#" id="uploadNewResume">➕ Upload new resume</a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <!-- Existing resumes -->
+                            {% for r in resumes %}
+                            <li>
+                                <a class="dropdown-item resume-item" href="#" data-id="{{ r.id }}">{{ r.description }}</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        <!-- Hidden inputs to store selection -->
+                        <input type="hidden" name="resume" id="resumeInput">
+                        {{ second_form.new_resume }}  <!-- hidden file input -->
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label for="{{ form.salary_range.id_for_label }}" class="form-label">Salary Range</label>
+                    {{ second_form.salary_range }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    var collapseElement = document.getElementById('collapseExample');
+    var arrowIcon = document.getElementById('arrowIcon');
+
+    collapseElement.addEventListener('show.bs.collapse', function () {
+        arrowIcon.classList.remove('bi-caret-right');
+        arrowIcon.classList.add('bi-caret-down');
+    });
+
+    collapseElement.addEventListener('hide.bs.collapse', function () {
+        arrowIcon.classList.remove('bi-caret-down');
+        arrowIcon.classList.add('bi-caret-right');
+    });
+});
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    const uploadLink = document.getElementById('uploadNewResume');
+    const fileInput = document.getElementById('newResumeInput');
+    const resumeInput = document.getElementById('resumeInput');
+    const dropdownBtn = document.getElementById('resumeDropdown');
+
+    // Upload new resume
+    uploadLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        fileInput.click(); // reliably opens file picker
+    });
+
+    // When a file is selected, update hidden input and dropdown label
+    fileInput.addEventListener('change', function() {
+        if (fileInput.files.length > 0) {
+            dropdownBtn.textContent = fileInput.files[0].name;
+            resumeInput.value = 'upload_new'; // mark as new upload in backend
+        }
+    });
+
+    // Existing resumes
+    document.querySelectorAll('.resume-item').forEach(function(item) {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            const id = item.getAttribute('data-id');
+            const text = item.textContent;
+            dropdownBtn.textContent = text;    // update button label
+            resumeInput.value = id;             // store selected resume ID
+            fileInput.value = '';               // clear file input if previously used
+        });
+    });
+});
+</script>
+{% endblock main_content %}

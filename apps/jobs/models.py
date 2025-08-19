@@ -1,3 +1,50 @@
 from django.db import models
+from django.contrib.auth.models import User
+from django.utils import timezone
 
 # Create your models here.
+
+
+class JobApplication(models.Model):
+    STATUS_CHOICES = [
+        ('applied', 'Applied'),
+        ('interview', 'Interview'),
+        ('offer', 'Offer'),
+        ('rejected', 'Rejected'),
+    ]
+    
+    user = models.ManyToManyField(User)
+    job_name = models.CharField(max_length=64, null=False)
+    company = models.CharField(max_length=64, null=False)
+    country = models.CharField(max_length=32, null=True)
+    city = models.CharField(max_length=64, null=True)
+    apply_date = models.DateField()
+    valid_to = models.DateField()
+    portal = models.CharField(max_length=32, null=True)
+    link = models.URLField(max_length=128, null=True)
+    status = models.CharField(max_length=32, choices=STATUS_CHOICES, default='applied')
+    
+    @property
+    def valid_days(self):
+        """Return number of days from today until valid_to date"""
+        today = timezone.now().date()
+        delta = self.valid_to - today
+        return delta.days if delta.days >= 0 else 0  # don't return negative
+        
+
+class Resume(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    description = models.CharField(max_length=128)
+    job_title = models.CharField(max_length=64, null=True)
+    file = models.FileField(upload_to="resume/")
+    
+    def __str__():
+        return Resume.description
+
+class JobApplicationDetails(models.Model):
+    job_application = models.OneToOneField(JobApplication, on_delete=models.CASCADE)
+    resume = models.ManyToManyField(Resume, blank=True)
+    job_application_body = models.TextField(null=True)
+    comments = models.TextField(null=True)
+    salary_range = models.CharField(max_length=32, null=True)
+

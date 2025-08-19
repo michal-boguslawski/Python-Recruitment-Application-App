@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import CustomLoginView, CustomRegisterView, ActivateAccount
+from .views import CustomLoginView, CustomRegisterView, ActivateAccount, CustomLogoutView
 from django.views.generic import TemplateView
 from django.contrib.auth.views import LogoutView
 

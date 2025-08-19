@@ -1,6 +1,6 @@
-{% extends "home/home.html" %}
+{% extends "users/before_login_base.html" %}
 
-{% block home_content %}
+{% block main_content %}
 
 <form method="post" class="border rounded-5 p-4 mx-auto bg-light mt-4" style="max-width: 400px;">
     {% csrf_token %}
@@ -24,4 +24,4 @@
     </div>
 </form>
 
-{% endblock home_content %}
+{% endblock main_content %}
