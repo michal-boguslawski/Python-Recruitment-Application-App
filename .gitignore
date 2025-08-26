@@ -19,3 +19,7 @@ app/
 # DB or local config
 *.sqlite3
 .env
+
+**/media/profile_pics/*
+**/media/**/resumes/*
+**/ideas/*

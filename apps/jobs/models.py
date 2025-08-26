@@ -13,7 +13,7 @@ class JobApplication(models.Model):
         ('rejected', 'Rejected'),
     ]
     
-    user = models.ManyToManyField(User)
+    user = models.ManyToManyField(User, related_name='job_applications')
     job_name = models.CharField(max_length=64, null=False)
     company = models.CharField(max_length=64, null=False)
     country = models.CharField(max_length=32, null=True)
@@ -33,18 +33,24 @@ class JobApplication(models.Model):
         
 
 class Resume(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='resumes')
     description = models.CharField(max_length=128)
     job_title = models.CharField(max_length=64, null=True)
-    file = models.FileField(upload_to="resume/")
+    file_name = models.CharField(max_length=128, default='')
+    file = models.FileField(upload_to='resume/')
+    summary = models.TextField(null=True)
+    category = models.CharField(
+        max_length=64,
+        default='',
+        # choices=[],
+    )
     
     def __str__():
         return Resume.description
 
 class JobApplicationDetails(models.Model):
-    job_application = models.OneToOneField(JobApplication, on_delete=models.CASCADE)
+    job_application = models.OneToOneField(JobApplication, on_delete=models.CASCADE, related_name='details')
     resume = models.ManyToManyField(Resume, blank=True)
     job_application_body = models.TextField(null=True)
     comments = models.TextField(null=True)
     salary_range = models.CharField(max_length=32, null=True)
-

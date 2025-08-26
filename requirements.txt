@@ -1,5 +1,9 @@
 django==5.2.5
-psycopg2==2.9.10
+psycopg2-binary==2.9.10
 django-environ==0.12.0
 django-pytest==0.2.0
 pillow==11.3.0
+django-phonenumber-field==8.1.0 
+phonenumbers==9.0.12
+pandas==2.3.2
+weasyprint==66.0

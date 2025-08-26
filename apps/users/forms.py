@@ -38,17 +38,30 @@ class CustomUserCreationForm(UserCreationForm):
                 profile_picture=self.cleaned_data.get('profile_picture'),
             )
         return user
+    
+    def clean_username(self):
+        username = self.cleaned_data.get('username').lower()
+        if User.objects.filter(username__iexact=username).exists():
+            raise forms.ValidationError("A user with that username already exists.")
+        return username
+    
+    def clean_first_name(self):
+        first_name = self.cleaned_data.get('first_name', '')
+        return first_name.caopitalize()
+    
+    def clean_last_name(self):
+        last_name = self.cleaned_data.get('last_name', '')
+        return last_name.capitalize()
+    
+    def clean_phone_number(self):
+        phone_number = self.cleaned_data.get('phone_number', '')
+        return phone_number
 
     def clean_email(self):
-        email = self.cleaned_data.get('email')
-        if User.objects.filter(email=email).exists():
+        email = self.cleaned_data.get('email').lower()
+        if User.objects.filter(email__iexact=email).exists():
             raise forms.ValidationError("A user with that email already exists.")
         return email
-
-
-class CustomAuthenticationForm(AuthenticationForm):
-    username = forms.CharField()
-    password = forms.CharField()
 
 class UserProfileForm(forms.ModelForm):
     class Meta:
