@@ -5,17 +5,18 @@ from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
+from django.forms import modelformset_factory
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils.encoding import force_str, force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views import View
-from django.views.generic import DetailView
+from django.views.generic import DetailView, UpdateView
 from django.views.generic.edit import FormView
 
-from .forms import CustomUserCreationForm, UserProfileForm
-from .models import UserProfile
+from .forms import CustomUserCreationForm, UserProfileForm, CustomUpdateUserForm, UserProfileUpdateForm, SiteLinksForm
+from .models import UserProfile, SiteLinks
 
 # Create your views here.
 class CustomLoginView(LoginView):
@@ -119,3 +120,66 @@ class UserDetailView(LoginRequiredMixin, DetailView):
         context['site_links'] = site_links
         context['profile'] = profile
         return context
+
+class UserUpdateView(LoginRequiredMixin, UpdateView):
+    template_name = 'users/update_profile.html'
+    model = User
+    form_class = CustomUpdateUserForm
+    second_form_class = UserProfileUpdateForm
+    success_url = reverse_lazy('users:profile')
+
+    def get_object(self, queryset=None):
+        return self.request.user
+    
+    def get_formset_class(self):
+        return modelformset_factory(
+            SiteLinks,
+            form=SiteLinksForm,
+            extra=0,
+            can_delete=True
+        )
+        
+    def get_formset(self):
+        FormsetClass = self.get_formset_class()
+        if self.request.method == "POST":
+            return FormsetClass(self.request.POST, queryset=self.get_queryset())
+        return FormsetClass(queryset=self.get_queryset())
+
+    def get_queryset(self):
+        return self.request.user.sitelinks.all()
+
+    def get_second_form(self):
+        if self.request.method == "POST":
+            return self.second_form_class(self.request.POST, self.request.FILES, instance=self.request.user.userprofile)
+        return self.second_form_class(instance=self.request.user.userprofile)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["second_form"] = kwargs.get("second_form", self.get_second_form())
+        context["formset"] = kwargs.get("formset", self.get_formset())
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.get_object()  # Ensure we have the user object
+        form = self.get_form()
+        second_form = self.get_second_form()
+        formset = self.get_formset()
+
+        if form.is_valid() and second_form.is_valid() and formset.is_valid():
+            # Save user form
+            form.save()
+
+            # Save user profile form
+            second_form.save()
+            
+            instances = formset.save(commit=False)
+            for obj in instances:
+                obj.user = self.request.user
+                obj.save()
+            # delete objects if marked
+            for obj in formset.deleted_objects:
+                obj.delete()
+            return redirect(self.get_success_url())
+        return self.render_to_response(
+            self.get_context_data(form=form, second_form=second_form, formset=formset)
+        )

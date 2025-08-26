@@ -1,3 +1,8 @@
+import os
+from django.utils import timezone
+# from apps.users.models import UserProfile
+
+
 COUNTRY_DECODER_DICT = {"poland": "PL", "united states": "US", "PL": "PL", "US": "US"}
 PHONE_DETAILS_DICT = {
     "PL": {
@@ -46,3 +51,19 @@ def format_phone_number(phone_number: str, country: str = 'poland') -> str:
     part2 = phone_number[3:6]
     part3 = phone_number[6:]
     return details['format'].format(prefix=prefix, part1=part1, part2=part2, part3=part3)
+
+def user_profile_picture_path(instance: "UserProfile", filename: str) -> str: # type: ignore
+    """
+    Generate file path for new user profile picture:
+    MEDIA_ROOT/profile_pics/<username>_<timestamp>.<ext>
+    
+    Args:
+        instance (UserProfile): instance of UserProfile class
+        filename (str): name of uploaded photow
+    Returns:
+        str: path where the file will be stored with new name
+    """
+    ext = filename.split('.')[-1]  # get file extension
+    timestamp = timezone.now().strftime("%Y%m%d%H%M%S")
+    filename = f"{instance.user.username}_{timestamp}.{ext}"
+    return os.path.join('profile_pics/', filename)

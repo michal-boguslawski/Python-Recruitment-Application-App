@@ -2,6 +2,7 @@
 
 ```
 python manage.py load_users 50
+python manage.py load_resumes 100
 python manage.py makemigrations
 python manage.py migrate
 python manage.py runserver 0.0.0.0:8000

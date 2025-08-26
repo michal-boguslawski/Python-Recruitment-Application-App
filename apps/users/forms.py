@@ -1,8 +1,8 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
 from django.contrib.auth.models import User
 
-from .models import UserProfile
+from .models import UserProfile, SiteLinks
 
 class CustomUserCreationForm(UserCreationForm):
     username = forms.CharField()
@@ -47,7 +47,7 @@ class CustomUserCreationForm(UserCreationForm):
     
     def clean_first_name(self):
         first_name = self.cleaned_data.get('first_name', '')
-        return first_name.caopitalize()
+        return first_name.capitalize()
     
     def clean_last_name(self):
         last_name = self.cleaned_data.get('last_name', '')
@@ -67,3 +67,30 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ['phone_number', 'country', 'city', 'profile_picture']
+
+class CustomUpdateUserForm(UserChangeForm):
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name')
+    
+    def clean_first_name(self):
+        first_name = self.cleaned_data.get('first_name', '')
+        return first_name.capitalize()
+    
+    def clean_last_name(self):
+        last_name = self.cleaned_data.get('last_name', '')
+        return last_name.capitalize()
+
+class UserProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['phone_number', 'country', 'city', 'profile_picture']
+    
+    def clean_phone_number(self):
+        phone_number = self.cleaned_data.get('phone_number', '')
+        return phone_number
+
+class SiteLinksForm(forms.ModelForm):
+    class Meta:
+        model = SiteLinks
+        fields = ['name', 'url', 'description']

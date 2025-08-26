@@ -1,6 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.views.generic.edit import FormView
 from django.views.generic.list import ListView
 
@@ -38,6 +39,7 @@ class CreateJobApplicationView(LoginRequiredMixin, FormView):
         # Add second form to context for template rendering
         if 'second_form' not in context:
             context['second_form'] = self.second_form_class(user=self.request.user)
+            context['resumes'] = user=self.request.user.resumes.all()
         return context
 
     def get_success_url(self):
@@ -56,10 +58,11 @@ class CreateJobApplicationView(LoginRequiredMixin, FormView):
     def get_initial(self):
         initial = super().get_initial()
         if self.request.user.is_authenticated:
-            profile = getattr(self.request.user, 'userprofile', None)
+            profile = self.request.user.userprofile
             if profile:
                 initial['country'] = profile.country
-                initial['city'] = profile.city  # also prefill city if desired
+                initial['city'] = profile.city
+                initial['apply_date'] = timezone.now().date()
         return initial
 
     def post(self, request, *args, **kwargs):

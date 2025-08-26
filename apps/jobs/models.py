@@ -1,8 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
-
-# Create your models here.
+from apps.jobs.utils import resume_file_path
 
 
 class JobApplication(models.Model):
@@ -36,8 +35,8 @@ class Resume(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='resumes')
     description = models.CharField(max_length=128)
     job_title = models.CharField(max_length=64, null=True)
-    file_name = models.CharField(max_length=128, default='')
-    file = models.FileField(upload_to='resume/')
+    file_name = models.CharField(max_length=128, null=True, default='')
+    file = models.FileField(upload_to=resume_file_path, blank=True, null=True)
     summary = models.TextField(null=True)
     category = models.CharField(
         max_length=64,
@@ -46,11 +45,11 @@ class Resume(models.Model):
     )
     
     def __str__():
-        return Resume.description
+        return Resume.file_name
 
 class JobApplicationDetails(models.Model):
     job_application = models.OneToOneField(JobApplication, on_delete=models.CASCADE, related_name='details')
-    resume = models.ManyToManyField(Resume, blank=True)
+    resume = models.ManyToManyField(Resume, blank=True, related_name='job_app_details')
     job_application_body = models.TextField(null=True)
     comments = models.TextField(null=True)
     salary_range = models.CharField(max_length=32, null=True)

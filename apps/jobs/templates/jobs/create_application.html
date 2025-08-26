@@ -13,33 +13,33 @@
         <div class="row mb-3">
             <div class="col-md-6">
                 <label for="{{ form.job_name.id_for_label }}" class="form-label">Job Title</label>
-                <input type="text" name="job_name" id="job_name" class="form-control">
+                <input type="text" name="job_name" id="id_job_name" class="form-control">
             </div>
             <div class="col-md-6">
                 <label for="{{ form.company.id_for_label }}" class="form-label">Company Name</label>
-                <input type="text" name="company" id="company" class="form-control">
+                <input type="text" name="company" id="id_company" class="form-control">
             </div>
         </div>
         
         <div class="row mb-3">
             <div class="col-md-6">
                 <label for="{{ form.country.id_for_label }}" class="form-label">Country</label>
-                {{ form.country }}
+                <input type="text" name="country" id="id_country" class="form-control" value="{{ form.country.initial }}">
             </div>
             <div class="col-md-6">
                 <label for="{{ form.city.id_for_label }}" class="form-label">City</label>
-                {{ form.city }}
+                <input type="text" name="city" id="id_city" class="form-control" value="{{ form.city.initial }}">
             </div>
         </div>
         
         <div class="row mb-3">
             <div class="col-md-3">
                 <label for="{{ form.apply_date.id_for_label }}" class="form-label">Application Date</label>
-                {{ form.apply_date }}
+                <input type="date" name="apply_date" id="id_apply_date" class="form-control" value="{{ form.apply_date.initial|date:'Y-m-d' }}">
             </div>
             <div class="col-md-3">
                 <label for="{{ form.city.id_for_label }}" class="form-label">Job Offer Valid To</label>
-                {{ form.valid_to }}
+                <input type="date" name="valid_to" id="id_valid_to" class="form-control">
             </div>
             <div class="col-md-6">
                 <label for="{{ form.link.id_for_label }}" class="form-label">Link</label>
@@ -50,7 +50,11 @@
         <div class="row mb-3 justify-content-center">
             <div class="col-md-3">
                 <label for="{{ form.status.id_for_label }}" class="form-label">Application Status</label>
-                {{ form.status }}
+                <select name="status" id="id_status" class="form-select">
+                    {% for value, label in form.status.field.choices %}
+                        <option value="{{ value }}" {% if form.status.value == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
             </div>
             <div class="col-md-3">
                 <label for="{{ form.portal.id_for_label }}" class="form-label">Portal</label>
@@ -75,11 +79,11 @@
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label for="{{ form.job_application_body.id_for_label }}" class="form-label">Job Description</label>
-                    {{ second_form.job_application_body }}
+                    <textarea name="job_application_body" cols="30" rows="5" id="id_job_application_body" class="form-control"></textarea>
                 </div>
                 <div class="col-md-6">
                     <label for="{{ form.comments.id_for_label }}" class="form-label">Comments</label>
-                    {{ second_form.comments }}
+                    <textarea name="comments" cols="30" rows="5" id="id_comments" class="form-control"></textarea>
                 </div>
             </div>
             
@@ -87,30 +91,27 @@
                 <div class="col-md-6">
                     <label class="form-label">Resume</label>
                     <div class="dropdown">
-                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="resumeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button class="btn btn-outline-secondary dropdown-toggle text-truncate w-100" type="button" id="resumeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                             Select resume
                         </button>
-                        <ul class="dropdown-menu" aria-labelledby="resumeDropdown">
-                            <!-- Upload new -->
+                        <ul class="dropdown-menu w-100" aria-labelledby="resumeDropdown">
                             <li>
                                 <a class="dropdown-item" href="#" id="uploadNewResume">➕ Upload new resume</a>
                             </li>
                             <li><hr class="dropdown-divider"></li>
-                            <!-- Existing resumes -->
                             {% for r in resumes %}
                             <li>
-                                <a class="dropdown-item resume-item" href="#" data-id="{{ r.id }}">{{ r.description }}</a>
+                                <a class="dropdown-item resume-item" href="#" data-id="{{ r.id }}">{{ r.file_name }}</a>
                             </li>
                             {% endfor %}
                         </ul>
-                        <!-- Hidden inputs to store selection -->
                         <input type="hidden" name="resume" id="resumeInput">
-                        {{ second_form.new_resume }}  <!-- hidden file input -->
+                        {{ second_form.new_resume }}
                     </div>
                 </div>
                 <div class="col-md-6">
                     <label for="{{ form.salary_range.id_for_label }}" class="form-label">Salary Range</label>
-                    {{ second_form.salary_range }}
+                    <input type="text" name="salary_range" id="id_salary_range" class="form-control">
                 </div>
             </div>
         </div>
@@ -121,5 +122,5 @@
     </div>
 </form>
 
-<script src="{% static 'js/profile.js' %}"></script>
+<script src="{% static 'js/collapse_container.js' %}"></script>
 {% endblock main_content %}
