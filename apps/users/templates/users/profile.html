@@ -1,0 +1,84 @@
+{% extends "users/after_login_base.html" %}
+{% load static %}
+{% load phone_number_extras %}
+
+{% block main_content %}
+<div class="container-lg border border-3 rounded-5 p-4 mx-auto bg-light mt-4 mb-4" style="min-height: 60vh;">
+    <div class="container-lg border border-3 rounded-5 p-4 mx-auto bg-white m-4">
+        <div class="row mb-3">
+            <div class="col col-8">
+                <div class="h2 border-bottom pb-3 mb-3 display-2">
+                    Account Information
+                </div>
+                <div class="row mb-1 ms-3">
+                    <div class="col col-6">
+                        <label class="form-label h6 text-secondary mb-1">First Name</label>
+                        <div class="form-control-plaintext">{{ user.first_name }}</div>
+                    </div>
+                    <div class="col col-6">
+                        <label class="form-label h6 text-secondary mb-1">Last Name</label>
+                        <div class="form-control-plaintext">{{ user.last_name }}</div>
+                    </div>
+                </div>
+                <div class="row mb-1 ms-3 border-bottom pb-3">
+                    <div class="col col-6">
+                        <label class="form-label h6 text-secondary mb-1">Email</label>
+                        <div class="form-control-plaintext">{{ user.email }}</div>
+                    </div>
+                    <div class="col col-6">
+                        <label class="form-label h6 text-secondary mb-1">Username</label>
+                        <div class="form-control-plaintext">{{ user.username }}</div>
+                    </div>
+                </div>
+                <div class="row mb-1 ms-3">
+                    <div class="col col-6">
+                        <label class="form-label h6 text-secondary mb-1">Country</label>
+                        <div class="form-control-plaintext">{{ profile.country }}</div>
+                    </div>
+                    <div class="col col-6">
+                        <label class="form-label h6 text-secondary mb-1">City</label>
+                        <div class="form-control-plaintext">{{ profile.city }}</div>
+                    </div>
+                </div>
+                <div class="row mb-1 ms-3">
+                    <div class="col col-6">
+                        <label class="form-label h6 text-secondary mb-1">Phone Number</label>
+                        <div class="form-control-plaintext">{{ profile|phone_format }}</div>
+                    </div>
+                    <div class="col col-6">
+                        <label class="form-label h6 text-secondary mb-1">Date Joined</label>
+                        <div class="form-control-plaintext">{{ user.date_joined }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col col-4">
+                <h2 class="display-2">Photo</h2>
+                <div class="d-flex justify-content-center align-items-center h-100">
+                    {% if not profile.profile_picture %}
+                        <img src="{% static 'images/random person.png' %}" class="img-fluid mb-3" alt="Default Profile Picture">
+                    {% else %}
+                        <img src="{{ profile.profile_picture.url }}" class="img-fluid mb-3" alt="Profile Picture">
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col col-8 list-group">
+            <div class="h2 border-bottom pb-3 display-2">Social Links</div>
+            {% for link in site_links %}
+                <a href="{{ link.url }}" class="list-group-item list-group-item-action" target="_blank">
+                    <h5 class="mb-1">{{ link.name }}</h5>
+                    <p class="mb-1">{{ link.description }}</p>
+                </a>
+            {% empty %}
+                <p>No site links available.</p>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="d-flex gap-2 mb-3 justify-content-center">
+        <a href="#" class="btn btn-primary btn-lg">Edit Profile</a>
+        <a href="#" class="btn btn-secondary btn-lg">Change Password</a>
+    </div>
+
+</div>
+{% endblock main_content %}

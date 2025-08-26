@@ -1,7 +1,7 @@
 from django.urls import path
-from .views import CustomLoginView, CustomRegisterView, ActivateAccount, CustomLogoutView
 from django.views.generic import TemplateView
 from django.contrib.auth.views import LogoutView
+from .views import CustomLoginView, CustomRegisterView, ActivateAccount, CustomLogoutView, UserDetailView
 
 urlpatterns = [
     path('login/', CustomLoginView.as_view(), name='login'),
@@ -12,4 +12,5 @@ urlpatterns = [
          TemplateView.as_view(template_name='users/account_activation_sent.html'),
          name='account_activation_sent'
     ),
+    path('profile/', UserDetailView.as_view(), name='profile'),
 ]

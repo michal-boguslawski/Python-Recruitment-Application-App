@@ -96,3 +96,6 @@ class CreateJobApplicationView(LoginRequiredMixin, FormView):
 
         job_details.save()
         return super().form_valid(form)
+
+def jobs_home_view(request):
+    return render(request, template_name='jobs/home.html')

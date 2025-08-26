@@ -151,6 +151,12 @@ def generate_users(n: int) -> dict:
     # Assign random profile pictures
     generated_users["profile_picture"] = [random_pic() for _ in range(n)]
     
+    # Add LinkedIn and GitHub URLs
+    linkedIn_base = "https://www.linkedin.com/in/"
+    github_base = "https://github.com/"
+    generated_users["linkedIn_url"] = generated_users["username"].apply(lambda username: f"{linkedIn_base}{username}")
+    generated_users["github_url"] = generated_users["username"].apply(lambda username: f"{github_base}{username}")
+    
     # Write to JSON file
     json_path = os.path.join(DIR_PATH, "sample_data", "generated_users.json")
     with open(json_path, "w") as f:

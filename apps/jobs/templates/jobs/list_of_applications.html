@@ -42,15 +42,7 @@
             <td class="col-max">{{ job_application.city }}</td>
             <td>{{ job_application.apply_date }}</td>
             <td>{{ job_application.valid_to }}</td>
-            <td
-                {% if job_application.valid_days <= 3 %}
-                    class="bg-danger text-white"
-                {% elif job_application.valid_days <= 7 %}
-                    class="bg-warning text-dark"
-                {% else %}
-                    class="bg-success text-white"
-                {% endif %}
-            >{{ job_application.valid_days }}</td>
+            <td>{{ job_application.valid_days }}</td>
             <td>
                 <a href="{{ job_application.link }}" class="btn btn-outline-primary btn-sm" target="_blank">
                     {{ job_application.portal }}

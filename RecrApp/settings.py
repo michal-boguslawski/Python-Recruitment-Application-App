@@ -130,6 +130,7 @@ STATICFILES_DIRS = [
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+LOGIN_URL = '/users/login/'
 LOGOUT_REDIRECT_URL = '/'
 
 # Static files (CSS, JavaScript, Images)

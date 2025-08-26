@@ -22,7 +22,7 @@ def user_profile_picture_path(instance: "UserProfile", filename: str) -> str:
     return os.path.join('profile_pics/', filename)
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='userprofile')
     phone_number = PhoneNumberField(blank=True, null=True)
     country = models.CharField(max_length=20, blank=True, null=True)
     city = models.CharField(max_length=20, blank=True, null=True)
@@ -30,3 +30,12 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s Profile"
+
+class SiteLinks(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sitelinks')
+    name = models.CharField(max_length=50)
+    url = models.URLField(max_length=200)
+    description = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.name

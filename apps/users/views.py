@@ -1,6 +1,7 @@
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
+from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
@@ -10,6 +11,7 @@ from django.urls import reverse_lazy
 from django.utils.encoding import force_str, force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views import View
+from django.views.generic import DetailView
 from django.views.generic.edit import FormView
 
 from .forms import CustomUserCreationForm, UserProfileForm
@@ -41,6 +43,7 @@ class CustomLogoutView(LogoutView):
 class CustomRegisterView(FormView):
     form_class = CustomUserCreationForm
     second_form_class = UserProfileForm
+    redirect_authenticated_user = True
     template_name = 'users/register.html'
     success_url = reverse_lazy('users:account_activation_sent')
 
@@ -98,3 +101,21 @@ class ActivateAccount(View):
             return redirect('users:login')
         else:
             return render(request, 'users/activation_invalid.html')
+
+class UserDetailView(LoginRequiredMixin, DetailView):
+    model = User
+    template_name = 'users/profile.html'
+    success_url = reverse_lazy('users:profile')
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Add your custom context variables here
+        
+        profile = self.request.user.userprofile
+        site_links = self.request.user.sitelinks.all()
+        context['site_links'] = site_links
+        context['profile'] = profile
+        return context

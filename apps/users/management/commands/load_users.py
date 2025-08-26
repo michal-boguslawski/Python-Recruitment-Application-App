@@ -7,7 +7,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management import BaseCommand
 
 from media.input_data.generate_data import generate_users
-from apps.users.models import UserProfile
+from apps.users.models import UserProfile, SiteLinks
 
 class Command(BaseCommand):
     help = 'Create random users'
@@ -20,6 +20,7 @@ class Command(BaseCommand):
         total = kwargs['total']
         users_data = generate_users(total)
         userprofiles = []
+        userlinks = []
         for user_data in tqdm(users_data, desc="Creating users", unit="user", file=stdout):
             # Create User
             user = User.objects.create_user(
@@ -48,8 +49,21 @@ class Command(BaseCommand):
                     profile_picture=image_file
                 )
                 userprofiles.append(userprofile)
+                
+                # Create SiteLinks
+                for site in ['linkedIn', 'github']:
+                    url_key = f"{site}_url"
+                    if user_data.get(url_key):
+                        site_links_data = SiteLinks(
+                            user=user,
+                            name=site.capitalize(),
+                            url=user_data[url_key],
+                            description=f"User's {site.capitalize()} profile"
+                        )
+                        userlinks.append(site_links_data)
         
         UserProfile.objects.bulk_create(userprofiles)
+        SiteLinks.objects.bulk_create(userlinks)
         total_created = len(userprofiles)
             
         self.stdout.write(
