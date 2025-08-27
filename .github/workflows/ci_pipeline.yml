@@ -85,7 +85,7 @@ jobs:
           POSTGRES_USER: ${{ env.DBUSER }}
           POSTGRES_PASSWORD: ${{ env.DBPASSWORD }}
         ports:
-          - ${{ env.DBPORT }}:5432
+          - 5432:5432
 
     steps:
       - name: Checkout repo
