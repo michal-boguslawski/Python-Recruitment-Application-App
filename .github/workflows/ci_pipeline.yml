@@ -4,11 +4,6 @@ on: [push, pull_request]
 
 env:
   SECRET_KEY: "django-insecure-u&+3c_-uwkww@=2q4h*)_0950xkn&jj80p*z@=5@hl+mwjrc$z"
-  DBHOST: "RecrAppDB"
-  DBUSER: "postgres"
-  DBNAME: "RecrAppDB"
-  DBPORT: "5432"
-  DBPASSWORD: "admin"
 
 jobs:
   lint:
@@ -45,6 +40,9 @@ jobs:
   unit-test:
     runs-on: ubuntu-22.04
 
+    env:
+      USE_SQLITE: True
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -74,6 +72,23 @@ jobs:
   integration-test:
     runs-on: ubuntu-22.04
 
+    env:
+      DBHOST: "localhost"
+      DBUSER: "postgres"
+      DBNAME: "RecrAppDB"
+      DBPORT: "5432"
+      DBPASSWORD: "admin"
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: ${{ env.DBNAME }}
+          POSTGRES_USER: ${{ env.DBUSER }}
+          POSTGRES_PASSWORD: ${{ env.DBPASSWORD }}
+        ports:
+          - 5432:5432
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -95,6 +110,10 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+
+      - name: Wait for Postgres
+        run: |
+          until pg_isready -h localhost -p 5432; do sleep 1; done
 
       - name: Run integration tests
         run: |
