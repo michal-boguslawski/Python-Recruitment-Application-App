@@ -142,7 +142,10 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
     def get_formset(self):
         FormsetClass = self.get_formset_class()
         if self.request.method == "POST":
-            return FormsetClass(self.request.POST, queryset=self.get_queryset())
+            return FormsetClass(
+                self.request.POST, 
+                queryset=self.get_queryset()
+            )
         return FormsetClass(queryset=self.get_queryset())
 
     def get_queryset(self):
@@ -150,7 +153,11 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_second_form(self):
         if self.request.method == "POST":
-            return self.second_form_class(self.request.POST, self.request.FILES, instance=self.request.user.userprofile)
+            return self.second_form_class(
+                self.request.POST, 
+                self.request.FILES, 
+                instance=self.request.user.userprofile
+            )
         return self.second_form_class(instance=self.request.user.userprofile)
 
     def get_context_data(self, **kwargs):
@@ -160,7 +167,7 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
         return context
 
     def post(self, request, *args, **kwargs):
-        self.get_object()  # Ensure we have the user object
+        self.object = self.get_object()  # Ensure we have the user object
         form = self.get_form()
         second_form = self.get_second_form()
         formset = self.get_formset()
