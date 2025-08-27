@@ -30,3 +30,10 @@ class JobApplicationDetailsForm(forms.ModelForm):
             choices = [(r.id, r.description) for r in resumes]
         choices.insert(0, ('upload_new', '➕ Upload new resume'))
         self.fields['resume'].choices = choices
+
+
+class ResumeListForm(forms.ModelForm):
+
+    class Meta:
+        model = Resume
+        exclude = []

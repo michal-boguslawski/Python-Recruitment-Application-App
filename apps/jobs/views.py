@@ -115,3 +115,15 @@ class CreateJobApplicationView(LoginRequiredMixin, FormView):
 
 def jobs_home_view(request):
     return render(request, template_name='jobs/home.html')
+
+
+class ResumeListView(LoginRequiredMixin, ListView):
+    template_name = 'jobs/resume_list.html'
+    model = Resume
+    paginate_by = 20
+    login_url = '/users/login/'
+    redirect_field_name = 'next'
+
+    def get_queryset(self):
+        # Return only resumes that belong to the logged-in user
+        return Resume.objects.filter(user=self.request.user)

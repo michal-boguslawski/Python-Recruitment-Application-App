@@ -17,7 +17,7 @@
         <ul class="dropdown-menu">
           <li><a class="dropdown-item" href={% url 'jobs:create_application' %}>Create job application</a></li>
           <li><a class="dropdown-item" href={% url 'jobs:list_of_applications' %}>List job applications</a></li>
-          <li><a class="dropdown-item" href="#">Resume list</a></li>
+          <li><a class="dropdown-item" href={% url 'jobs:resume_list' %}>Resume list</a></li>
           <li><hr class="dropdown-divider"></li>
           <li><a class="dropdown-item" href="#">Analysis</a></li>
         </ul>
