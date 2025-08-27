@@ -2,14 +2,6 @@ name: CI Pipeline
 
 on: [push, pull_request]
 
-env:
-  SECRET_KEY: "django-insecure-u&+3c_-uwkww@=2q4h*)_0950xkn&jj80p*z@=5@hl+mwjrc$z"
-  DBHOST: "localhost"
-  DBUSER: "postgres"
-  DBNAME: "RecrAppDB"
-  DBPORT: "5432"
-  DBPASSWORD: "admin"
-
 jobs:
   lint:
     runs-on: ubuntu-22.04
@@ -76,6 +68,14 @@ jobs:
 
   integration-test:
     runs-on: ubuntu-22.04
+
+    env:
+      SECRET_KEY: "django-insecure-u&+3c_-uwkww@=2q4h*)_0950xkn&jj80p*z@=5@hl+mwjrc$z"
+      DBHOST: "localhost"
+      DBUSER: "postgres"
+      DBNAME: "RecrAppDB"
+      DBPORT: "5432"
+      DBPASSWORD: "admin"
 
     services:
       postgres:
