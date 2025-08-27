@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from apps.users.models import UserProfile, SiteLinks
 
 
+@pytest.mark.django_db
 @pytest.fixture
 def create_user():
     def make_user(
