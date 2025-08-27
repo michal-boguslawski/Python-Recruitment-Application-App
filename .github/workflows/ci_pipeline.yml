@@ -78,12 +78,14 @@ jobs:
     runs-on: ubuntu-22.04
 
     services:
-    postgres:
-      image: postgres:15
-      env:
-        POSTGRES_DB: ${{ env.DBNAME }}
-        POSTGRES_USER: ${{ env.DBUSER }}
-        POSTGRES_PASSWORD: ${{ env.DBPASSWORD }}
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: ${{ env.DBNAME }}
+          POSTGRES_USER: ${{ env.DBUSER }}
+          POSTGRES_PASSWORD: ${{ env.DBPASSWORD }}
+        ports:
+          - ${{ env.DBPORT }}:5432
 
     steps:
       - name: Checkout repo
