@@ -14,6 +14,7 @@ def create_user():
     return make_user
 
 
+@pytest.mark.django_db
 class TestUserUnit:
     pytestmark = pytest.mark.django_db(transaction=False)
 
@@ -29,6 +30,7 @@ class TestUserUnit:
         assert user1.email != user2.email
 
 
+@pytest.mark.django_db
 class TestUserProfileUnit:
     pytestmark = pytest.mark.django_db(transaction=False)
 
@@ -45,6 +47,7 @@ class TestUserProfileUnit:
         assert profile2.user == user
 
 
+@pytest.mark.django_db
 class TestSiteLinksUnit:
     pytestmark = pytest.mark.django_db(transaction=False)
 

@@ -28,8 +28,8 @@ def create_user(db):
     return make_user
 
 
+@pytest.mark.django_db
 class TestCustomUserCreationForm:
-    @pytest.mark.django_db
     def test_form_valid_data(self):
         form_data = {
             'username': 'jan',
@@ -54,7 +54,6 @@ class TestCustomUserCreationForm:
         assert profile.country == 'Countryland'
         assert profile.city == 'Anytown'
 
-    @pytest.mark.django_db
     def test_form_missing_optional_fields(self):
         form_data = {
             'username': 'anna',
@@ -78,7 +77,6 @@ class TestCustomUserCreationForm:
         assert UserProfile.objects.count() == 1
         assert User.objects.count() == 1
 
-    @pytest.mark.django_db
     def test_form_invalid_password_mismatch(self):
         form_data = {
             'username': 'jan',
@@ -92,7 +90,6 @@ class TestCustomUserCreationForm:
         assert form.errors['password2'] == ["The two password fields didn’t match."]
         assert User.objects.count() == 0
 
-    @pytest.mark.django_db
     def test_form_invalid_duplicate_username(self, create_user):
         _ = create_user()
         form_data = {
@@ -108,7 +105,6 @@ class TestCustomUserCreationForm:
         assert User.objects.count() == 1
         assert UserProfile.objects.count() == 0
 
-    @pytest.mark.django_db
     def test_form_invalid_duplicate_email(self, create_user):
         _ = create_user()
         form_data = {
@@ -124,7 +120,6 @@ class TestCustomUserCreationForm:
         assert User.objects.count() == 1
         assert UserProfile.objects.count() == 0
 
-    @pytest.mark.django_db
     def test_form_image_field(self):
         # generate a simple image file
         size = (800, 600)
@@ -150,7 +145,6 @@ class TestCustomUserCreationForm:
         profile = UserProfile.objects.get(user=user)
         assert profile.profile_picture is not None
 
-    @pytest.mark.django_db
     def test_form_name_capitalization(self):
         form_data = {
             'username': 'jan',
@@ -167,8 +161,8 @@ class TestCustomUserCreationForm:
         assert user.last_name == 'Kowalski'
 
 
+@pytest.mark.django_db
 class TestUserProfileUpdateForm:
-    @pytest.mark.django_db
     def test_form_valid_data(self, create_user):
         user = create_user()
         form_data = {
@@ -191,7 +185,6 @@ class TestUserProfileUpdateForm:
         assert profile.country == 'Countryland'
         assert profile.city == 'Anytown'
 
-    @pytest.mark.django_db
     def test_form_missing_optional_fields(self, create_user):
         user = create_user()
         _ = UserProfile.objects.create(
@@ -213,8 +206,8 @@ class TestUserProfileUpdateForm:
         assert User.objects.count() == 1
 
 
+@pytest.mark.django_db
 class TestCustomUpdateUserForm:
-    @pytest.mark.django_db
     def test_form_valid_data(self, create_user):
         user = create_user()
         form_data = {
@@ -227,7 +220,6 @@ class TestCustomUpdateUserForm:
         assert updated_user.first_name == 'Jan'
         assert updated_user.last_name == 'Kowalski'
 
-    @pytest.mark.django_db
     def test_form_missing_optional_fields(self, create_user):
         user = create_user(first_name='Jan', last_name='Kowalski')
         form_data = {}
@@ -237,7 +229,6 @@ class TestCustomUpdateUserForm:
         assert updated_user.first_name == 'Jan'
         assert updated_user.last_name == 'Kowalski'
 
-    @pytest.mark.django_db
     def test_form_name_capitalization(self, create_user):
         user = create_user()
         form_data = {
@@ -251,8 +242,8 @@ class TestCustomUpdateUserForm:
         assert updated_user.last_name == 'Kowalski'
 
 
+@pytest.mark.django_db
 class TestSiteLinksForm:
-    @pytest.mark.django_db
     def test_form_valid_data(self, create_user):
         user = create_user()
         form_data = {
@@ -271,7 +262,6 @@ class TestSiteLinksForm:
         assert link.user == user
         assert str(link) == f"{link.name} - {user.username}"
 
-    @pytest.mark.django_db
     def test_form_missing_optional_fields(self, create_user):
         user = create_user()
         form_data = {
@@ -292,7 +282,6 @@ class TestSiteLinksForm:
         assert SiteLinks.objects.count() == 1
         assert User.objects.count() == 1
 
-    @pytest.mark.django_db
     def test_form_invalid_duplicate_url(self, create_user):
         user = create_user()
         _ = SiteLinks.objects.create(
@@ -312,7 +301,6 @@ class TestSiteLinksForm:
         assert SiteLinks.objects.count() == 1
         assert User.objects.count() == 1
 
-    @pytest.mark.django_db
     def test_form_invalid_url_format(self, create_user):
         _ = create_user()
         form_data = {
@@ -327,7 +315,6 @@ class TestSiteLinksForm:
         assert SiteLinks.objects.count() == 0
         assert User.objects.count() == 1
 
-    @pytest.mark.django_db
     def test_form_name_length_exceeded(self, create_user):
         _ = create_user()
         form_data = {
@@ -344,7 +331,6 @@ class TestSiteLinksForm:
         assert SiteLinks.objects.count() == 0
         assert User.objects.count() == 1
 
-    @pytest.mark.django_db
     def test_multiple_social_links(self, create_user):
         user = create_user()
         links_data = [

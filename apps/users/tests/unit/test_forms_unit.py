@@ -8,6 +8,7 @@ from apps.users.forms import CustomUserCreationForm, \
     CustomUpdateUserForm, UserProfileUpdateForm, SiteLinksForm
 
 
+@pytest.mark.django_db
 class TestCustomUserCreationFormUnit:
     pytestmark = pytest.mark.django_db(transaction=False)
 
@@ -70,6 +71,7 @@ class TestCustomUserCreationFormUnit:
         assert 'password2' in form.errors
 
 
+@pytest.mark.django_db
 class TestCustomUpdateUserFormUnit:
     pytestmark = pytest.mark.django_db(transaction=False)
 
@@ -82,6 +84,7 @@ class TestCustomUpdateUserFormUnit:
         assert form.is_valid()
 
 
+@pytest.mark.django_db
 class TestUserProfileUpdateFormUnit:
     pytestmark = pytest.mark.django_db(transaction=False)
 
@@ -125,6 +128,7 @@ class TestUserProfileUpdateFormUnit:
         assert 'phone_number' in form.errors
 
 
+@pytest.mark.django_db
 class TestSiteLinksFormUnit:
     pytestmark = pytest.mark.django_db(transaction=False)
 

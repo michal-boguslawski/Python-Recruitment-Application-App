@@ -16,22 +16,20 @@ def create_user(db):
     return make_user
 
 
+@pytest.mark.django_db
 class TestUser:
-    @pytest.mark.django_db
     def test_single_user_created(self, create_user):
         user = create_user("jan", "jan@example.com")
 
         assert user.username == "jan"
         assert user.email == "jan@example.com"
 
-    @pytest.mark.django_db
     def test_multiple_users_created(self, create_user):
         _ = create_user("jan", "jan@example.com")
         _ = create_user("anna", "anna@example.com")
 
         assert User.objects.count() == 2
 
-    @pytest.mark.django_db
     def test_login_password(self):
         from django.contrib.auth.models import User
         _ = User.objects.create_user(username="jan", password="correctpass")
@@ -40,7 +38,6 @@ class TestUser:
 
         assert result is not None
 
-    @pytest.mark.django_db
     def test_login_wrong_password(self):
         from django.contrib.auth.models import User
         _ = User.objects.create_user(username="jan", password="correctpass")
@@ -50,8 +47,8 @@ class TestUser:
         assert result is None
 
 
+@pytest.mark.django_db
 class TestUserProfile:
-    @pytest.mark.django_db
     def test_user_profile_str(self):
         user = User.objects.create(username="jan", email="jan@example.com")
         profile, created = UserProfile.objects.get_or_create(user=user)
@@ -59,15 +56,13 @@ class TestUserProfile:
         assert profile.user.username == "jan"
         assert str(profile) == f"{user.username}'s Profile"
 
-    @pytest.mark.django_db
     def test_user_profile_unique(self):
         user = User.objects.create(username="jan", email="jan@example.com")
-        profile1, created1 = UserProfile.objects.get_or_create(user=user)
-        profile2, created2 = UserProfile.objects.get_or_create(user=user)
+        profile1, _ = UserProfile.objects.get_or_create(user=user)
+        profile2, _ = UserProfile.objects.get_or_create(user=user)
         assert profile1 == profile2
         assert UserProfile.objects.count() == 1
 
-    @pytest.mark.django_db
     def test_user_profile_fields(self):
         user = User.objects.create(username="jan", email="jan@example.com")
         profile = UserProfile.objects.create(
@@ -81,8 +76,8 @@ class TestUserProfile:
         assert profile.country == "Countryland"
 
 
+@pytest.mark.django_db
 class TestSiteLinks:
-    @pytest.mark.django_db
     def test_user_profile_social_links(self):
         user = User.objects.create(username="jan", email="jan@example.com")
         github_link = SiteLinks(
@@ -101,7 +96,6 @@ class TestSiteLinks:
         assert links[0].name == "GitHub"
         assert links[1].name == "LinkedIn"
 
-    @pytest.mark.django_db
     def test_user_profile_social_links_str(self):
         user = User.objects.create(username="jan", email="jan@example.com")
         link = SiteLinks.objects.create(
@@ -111,7 +105,6 @@ class TestSiteLinks:
         )
         assert str(link) == f"{link.name} - {user.username}"
 
-    @pytest.mark.django_db
     def test_user_profile_social_links_unique(self):
         user = User.objects.create(username="jan", email="jan@example.com")
         _ = SiteLinks.objects.create(
