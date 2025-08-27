@@ -2,7 +2,7 @@
 from environ import Env
 
 env = Env()
-Env.read_env() 
+Env.read_env()
 
 DB_BACKENDS = {
     'sqlite': {
