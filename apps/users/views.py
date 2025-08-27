@@ -15,7 +15,7 @@ from django.views import View
 from django.views.generic import DetailView, UpdateView
 from django.views.generic.edit import FormView
 
-from .forms import CustomUserCreationForm, UserProfileForm, CustomUpdateUserForm, \
+from .forms import CustomUserCreationForm, CustomUpdateUserForm, \
     UserProfileUpdateForm, SiteLinksForm
 from .models import UserProfile, SiteLinks
 
@@ -45,7 +45,6 @@ class CustomLogoutView(LogoutView):
 
 class CustomRegisterView(FormView):
     form_class = CustomUserCreationForm
-    second_form_class = UserProfileForm
     redirect_authenticated_user = True
     template_name = 'users/register.html'
     success_url = reverse_lazy('users:account_activation_sent')

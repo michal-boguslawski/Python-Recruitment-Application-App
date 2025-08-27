@@ -10,13 +10,13 @@ class UserProfile(models.Model):
         on_delete=models.CASCADE,
         related_name='userprofile'
     )
-    phone_number = PhoneNumberField(blank=True, null=True)
-    country = models.CharField(max_length=20, blank=True, null=True)
-    city = models.CharField(max_length=20, blank=True, null=True)
+    phone_number = PhoneNumberField(null=True, unique=True)
+    country = models.CharField(max_length=20, null=True)
+    city = models.CharField(max_length=20, null=True)
     profile_picture = models.ImageField(
         upload_to=user_profile_picture_path,
         blank=True,
-        null=True
+        null=True,
     )
 
     def __str__(self):
@@ -26,8 +26,8 @@ class UserProfile(models.Model):
 class SiteLinks(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sitelinks')
     name = models.CharField(max_length=50)
-    url = models.URLField(max_length=200)
-    description = models.TextField(blank=True, null=True)
+    url = models.URLField(max_length=200, unique=True)
+    description = models.TextField(null=True, blank=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.name} - {self.user.username}"

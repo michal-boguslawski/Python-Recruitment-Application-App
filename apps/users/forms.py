@@ -65,37 +65,61 @@ class CustomUserCreationForm(UserCreationForm):
         return email
 
 
-class UserProfileForm(forms.ModelForm):
-    class Meta:
-        model = UserProfile
-        fields = ['phone_number', 'country', 'city', 'profile_picture']
-
-
 class CustomUpdateUserForm(UserChangeForm):
+    first_name = forms.CharField(required=False)
+    last_name = forms.CharField(required=False)
+
     class Meta:
         model = User
         fields = ('first_name', 'last_name')
 
     def clean_first_name(self):
-        first_name = self.cleaned_data.get('first_name', '')
+        first_name = self.cleaned_data.get('first_name')
+        if first_name is None or first_name == '':
+            return self.instance.first_name  # keep existing value
         return first_name.capitalize()
 
     def clean_last_name(self):
-        last_name = self.cleaned_data.get('last_name', '')
+        last_name = self.cleaned_data.get('last_name')
+        if last_name is None or last_name == '':
+            return self.instance.last_name  # keep existing value
         return last_name.capitalize()
 
 
 class UserProfileUpdateForm(forms.ModelForm):
+    phone_number = forms.CharField(required=False)
+    country = forms.CharField(required=False)
+    city = forms.CharField(required=False)
+    profile_picture = forms.ImageField(required=False)
+
     class Meta:
         model = UserProfile
         fields = ['phone_number', 'country', 'city', 'profile_picture']
 
     def clean_phone_number(self):
-        phone_number = self.cleaned_data.get('phone_number', '')
+        phone_number = self.cleaned_data.get('phone_number')
+        if phone_number is None or phone_number == '':
+            return self.instance.phone_number
         return phone_number
+
+    def clean_country(self):
+        country = self.cleaned_data.get('country')
+        if country is None or country == '':
+            return self.instance.country
+        return country
+
+    def clean_city(self):
+        city = self.cleaned_data.get('city')
+        if city is None or city == '':
+            return self.instance.city
+        return city
 
 
 class SiteLinksForm(forms.ModelForm):
+    name = forms.CharField(required=True)
+    url = forms.URLField(required=True, assume_scheme='https')
+    description = forms.CharField(required=False)
+
     class Meta:
         model = SiteLinks
         fields = ['name', 'url', 'description']
