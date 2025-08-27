@@ -1,8 +1,11 @@
 # apps/config/db.py
 from environ import Env
+from pathlib import Path
 
 env = Env()
-env.read_env()
+BASE_DIR = Path(__file__).resolve().parent.parent.parent  # adjust if needed
+env_file = BASE_DIR / ".env"
+env.read_env(env_file)
 
 DB_BACKENDS = {
     'sqlite': {
@@ -22,5 +25,5 @@ DB_BACKENDS = {
 
 def get_database_config():
     # Choose backend key from environment variable, default sqlite for tests
-    backend = 'sqlite' if env.bool('USE_SQLITE', default=True) else 'postgres'
+    backend = 'sqlite' if env.bool('USE_SQLITE', default=False) else 'postgres'
     return {'default': DB_BACKENDS[backend]}
