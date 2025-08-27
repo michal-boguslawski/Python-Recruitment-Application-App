@@ -1,5 +1,4 @@
 from django.urls import path
-from django.shortcuts import render
 
 from .views import ListJobApplicationView, CreateJobApplicationView, jobs_home_view
 

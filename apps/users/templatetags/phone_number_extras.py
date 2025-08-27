@@ -5,6 +5,7 @@ from apps.users.utils import format_phone_number
 
 register = template.Library()
 
+
 @register.filter
 def phone_format(userprofile: UserProfile) -> str:
     """Format the phone number with the country code."""

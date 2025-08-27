@@ -1,5 +1,4 @@
 from django import forms
-from django.utils import timezone
 
 from .models import JobApplication, JobApplicationDetails, Resume
 
@@ -9,6 +8,7 @@ class JobApplicationForm(forms.ModelForm):
         model = JobApplication
         exclude = ['user']
 
+
 class JobApplicationDetailsForm(forms.ModelForm):
     new_resume = forms.FileField(
         required=False,
@@ -17,10 +17,11 @@ class JobApplicationDetailsForm(forms.ModelForm):
             'style': 'display:none;'
         })
     )
+
     class Meta:
         model = JobApplicationDetails
         exclude = ['job_application']
-        
+
     def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
         choices = []

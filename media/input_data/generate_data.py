@@ -59,8 +59,10 @@ def generate_password(length: int = 12) -> str:
     """
     if length < 8:
         raise ValueError("Password length should be at least 8 characters.")
-    
-    characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()'
+
+    characters = 'abcdefghijklmnopqrstuvwxyz'
+    characters += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    characters += '0123456789!@#$%^&*()'
     password = ''.join(choices(characters, k=length))
     return password
 
@@ -75,7 +77,12 @@ def generate_phone_number(country: str) -> str:
     Returns:
         str: A randomly generated phone number.
     """
-    country_decoder_dict = {"Poland": "PL", "United States": "US", "PL": "PL", "US": "US"}
+    country_decoder_dict = {
+        "Poland": "PL",
+        "United States": "US",
+        "PL": "PL",
+        "US": "US",
+    }
     phone_details_dict = {
         "PL": {
             "length": 9,
@@ -86,15 +93,19 @@ def generate_phone_number(country: str) -> str:
             "prefix": "+1",
         }
     }
-    
+
     if country not in country_decoder_dict:
-        raise ValueError(f"Unsupported country code. Supported codes are: {list(country_decoder_dict.keys())}")
-    
+        raise ValueError(
+            f"Unsupported country code. "
+            f"Supported codes are: {list(country_decoder_dict.keys())}"
+        )
+
     country_code = country_decoder_dict[country]
     phone_details = phone_details_dict[country_code]
     number = ''.join(choices('0123456789', k=phone_details['length']))
-    
+
     return f"{phone_details['prefix']}{number}"
+
 
 def generate_users(n: int) -> dict:
     """
@@ -107,8 +118,11 @@ def generate_users(n: int) -> dict:
         dict: A dictionary with keys 'first_name' and 'last_name'.
     """
     # Default list of Cities in Poland
-    cities = ["Warszawa", "Kraków", "Łódź", "Wrocław", "Poznań", "Gdańsk", "Szczecin", "Bydgoszcz", "Lublin", "Białystok"]
-    
+    cities = [
+        "Warszawa", "Kraków", "Łódź", "Wrocław", "Poznań",
+        "Gdańsk", "Szczecin", "Bydgoszcz", "Lublin", "Białystok"
+    ]
+
     # Load datasets
     first_names_path = os.path.join(DIR_PATH, "sample_data", "imiona.txt")
     last_names_m_path = os.path.join(DIR_PATH, "sample_data", "nazwiska_meskie.txt")
@@ -116,50 +130,87 @@ def generate_users(n: int) -> dict:
     first_names_df = pd.read_csv(first_names_path)
     last_names_m_df = pd.read_csv(last_names_m_path)
     last_names_f_df = pd.read_csv(last_names_f_path)
-    
+
     # Sample first names and determine value counts for each gender
     generated_users = first_names_df.sample(n=n, weights="LICZBA_WYSTĄPIEŃ")
     generated_users["IMIĘ_PIERWSZE"] = generated_users["IMIĘ_PIERWSZE"].str.capitalize()
     gender_counts = generated_users["PŁEĆ"].value_counts().to_dict()
-    
+
     # Sample last names and assign them to generated users
-    generated_last_names_m = last_names_m_df.sample(n=gender_counts["MĘŻCZYZNA"], weights="Liczba")
-    generated_last_names_f = last_names_f_df.sample(n=gender_counts["KOBIETA"], weights="Liczba")
-    generated_users.loc[generated_users["PŁEĆ"] == "MĘŻCZYZNA", "last_name"] = generated_last_names_m["Nazwisko aktualne"].str.capitalize().values
-    generated_users.loc[generated_users["PŁEĆ"] == "KOBIETA", "last_name"] = generated_last_names_f["Nazwisko aktualne"].str.capitalize().values
-    
+    generated_last_names_m = last_names_m_df.sample(
+        n=gender_counts["MĘŻCZYZNA"],
+        weights="Liczba"
+    )
+    generated_last_names_f = last_names_f_df.sample(
+        n=gender_counts["KOBIETA"],
+        weights="Liczba"
+    )
+    generated_users.loc[generated_users["PŁEĆ"] == "MĘŻCZYZNA", "last_name"] = \
+        generated_last_names_m["Nazwisko aktualne"].str.capitalize().values
+    generated_users.loc[generated_users["PŁEĆ"] == "KOBIETA", "last_name"] = \
+        generated_last_names_f["Nazwisko aktualne"].str.capitalize().values
+
     # Select and rename columns
     generated_users = generated_users[["IMIĘ_PIERWSZE", "last_name"]]
     generated_users.rename(
         columns={
             "IMIĘ_PIERWSZE": "first_name",
             "last_name": "last_name",
-        }, 
+        },
         inplace=True,
     )
-    
+
     # Assign random cities and generate phone numbers
     generated_users["country"] = "Poland"
     generated_users["city"] = choices(cities, k=n)
-    generated_users["phone_number"] = generated_users["country"].apply(generate_phone_number)
-    
+    generated_users["phone_number"] = (
+        generated_users["country"].apply(generate_phone_number)
+    )
+
     # Generate usernames, emails, and passwords
-    generated_users["username"] = generated_users.apply(lambda row: generate_username(row["first_name"], row["last_name"]), axis=1)
-    generated_users["email"] = generated_users.apply(lambda row: generate_email(row["first_name"], row["last_name"]), axis=1)
-    generated_users["password"] = generated_users.apply(lambda row: generate_password(), axis=1)
-    
+    generated_users["username"] = (
+        generated_users
+        .apply(
+            lambda row: generate_username(
+                row["first_name"],
+                row["last_name"]
+            ),
+            axis=1
+        )
+    )
+    generated_users["email"] = (
+        generated_users
+        .apply(
+            lambda row: generate_email(
+                row["first_name"],
+                row["last_name"]
+            ),
+            axis=1
+        )
+    )
+    generated_users["password"] = (
+        generated_users
+        .apply(lambda row: generate_password(), axis=1)
+    )
+
     # Assign random profile pictures
     generated_users["profile_picture"] = [random_pic() for _ in range(n)]
-    
+
     # Add LinkedIn and GitHub URLs
     linkedIn_base = "https://www.linkedin.com/in/"
     github_base = "https://github.com/"
-    generated_users["linkedIn_url"] = generated_users["username"].apply(lambda username: f"{linkedIn_base}{username}")
-    generated_users["github_url"] = generated_users["username"].apply(lambda username: f"{github_base}{username}")
-    
+    generated_users["linkedIn_url"] = (
+        generated_users["username"]
+        .apply(lambda username: f"{linkedIn_base}{username}")
+    )
+    generated_users["github_url"] = (
+        generated_users["username"]
+        .apply(lambda username: f"{github_base}{username}")
+    )
+
     # Write to JSON file
     json_path = os.path.join(DIR_PATH, "sample_data", "generated_users.json")
     with open(json_path, "w") as f:
         json.dump(generated_users.to_dict(orient="records"), f, indent=4)
-    
+
     return generated_users.to_dict(orient="records")

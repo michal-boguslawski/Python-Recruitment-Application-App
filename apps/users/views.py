@@ -15,15 +15,16 @@ from django.views import View
 from django.views.generic import DetailView, UpdateView
 from django.views.generic.edit import FormView
 
-from .forms import CustomUserCreationForm, UserProfileForm, CustomUpdateUserForm, UserProfileUpdateForm, SiteLinksForm
+from .forms import CustomUserCreationForm, UserProfileForm, CustomUpdateUserForm, \
+    UserProfileUpdateForm, SiteLinksForm
 from .models import UserProfile, SiteLinks
 
-# Create your views here.
+
 class CustomLoginView(LoginView):
     template_name = 'users/login.html'
     redirect_authenticated_user = True
     authentication_form = AuthenticationForm
-    
+
     def get_success_url(self):
         return reverse_lazy('jobs:home')
 
@@ -33,13 +34,14 @@ class CustomLoginView(LoginView):
         context['title'] = 'Please Log In'
         context['button_info'] = 'Log In'
         return context
-    
+
+
 class CustomLogoutView(LogoutView):
     success_url = reverse_lazy('home:home')
-    
+
     def get_success_url(self):
         return reverse_lazy('home:home')
-    
+
 
 class CustomRegisterView(FormView):
     form_class = CustomUserCreationForm
@@ -61,7 +63,7 @@ class CustomRegisterView(FormView):
             user = form.save(commit=False)
             user.is_active = False
             user.save()
-            
+
             UserProfile.objects.create(
                 user=user,
                 phone_number=form.cleaned_data.get('phone_number', ''),
@@ -69,7 +71,7 @@ class CustomRegisterView(FormView):
                 city=form.cleaned_data.get('city', ''),
                 profile_picture=form.cleaned_data.get('profile_picture'),
             )
-            
+
             # Send activation email (your existing code)
             current_site = get_current_site(request)
             mail_subject = 'Activate your account'
@@ -82,10 +84,11 @@ class CustomRegisterView(FormView):
             EmailMessage(mail_subject, message, to=[user.email]).send()
 
             return redirect(self.success_url)
-        
+
         return self.render_to_response(
             self.get_context_data(form=form)
         )
+
 
 class ActivateAccount(View):
     def get(self, request, uidb64, token, *args, **kwargs):
@@ -103,6 +106,7 @@ class ActivateAccount(View):
         else:
             return render(request, 'users/activation_invalid.html')
 
+
 class UserDetailView(LoginRequiredMixin, DetailView):
     model = User
     template_name = 'users/profile.html'
@@ -114,12 +118,13 @@ class UserDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Add your custom context variables here
-        
+
         profile = self.request.user.userprofile
         site_links = self.request.user.sitelinks.all()
         context['site_links'] = site_links
         context['profile'] = profile
         return context
+
 
 class UserUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'users/update_profile.html'
@@ -130,7 +135,7 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_object(self, queryset=None):
         return self.request.user
-    
+
     def get_formset_class(self):
         return modelformset_factory(
             SiteLinks,
@@ -138,12 +143,12 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
             extra=0,
             can_delete=True
         )
-        
+
     def get_formset(self):
         FormsetClass = self.get_formset_class()
         if self.request.method == "POST":
             return FormsetClass(
-                self.request.POST, 
+                self.request.POST,
                 queryset=self.get_queryset()
             )
         return FormsetClass(queryset=self.get_queryset())
@@ -154,8 +159,8 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
     def get_second_form(self):
         if self.request.method == "POST":
             return self.second_form_class(
-                self.request.POST, 
-                self.request.FILES, 
+                self.request.POST,
+                self.request.FILES,
                 instance=self.request.user.userprofile
             )
         return self.second_form_class(instance=self.request.user.userprofile)
@@ -178,7 +183,7 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
 
             # Save user profile form
             second_form.save()
-            
+
             instances = formset.save(commit=False)
             for obj in instances:
                 obj.user = self.request.user
