@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from apps.users.models import UserProfile, SiteLinks
 
 
-@pytest.mark.django_db
 @pytest.fixture
 def create_user():
     def make_user(
@@ -15,7 +14,6 @@ def create_user():
     return make_user
 
 
-@pytest.mark.django_db
 class TestUserUnit:
     pytestmark = pytest.mark.django_db(transaction=False)
 
@@ -31,7 +29,6 @@ class TestUserUnit:
         assert user1.email != user2.email
 
 
-@pytest.mark.django_db
 class TestUserProfileUnit:
     pytestmark = pytest.mark.django_db(transaction=False)
 
@@ -48,7 +45,6 @@ class TestUserProfileUnit:
         assert profile2.user == user
 
 
-@pytest.mark.django_db
 class TestSiteLinksUnit:
     pytestmark = pytest.mark.django_db(transaction=False)
 

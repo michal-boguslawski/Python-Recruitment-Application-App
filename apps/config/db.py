@@ -2,6 +2,7 @@
 from environ import Env
 
 env = Env()
+Env.read_env() 
 
 DB_BACKENDS = {
     'sqlite': {
@@ -10,16 +11,16 @@ DB_BACKENDS = {
     },
     'postgres': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('DBNAME'),
-        'USER': env('DBUSER'),
-        'PASSWORD': env('DBPASSWORD'),
-        'HOST': env('DBHOST'),
-        'PORT': env('DBPORT'),
+        'NAME': env('DBNAME', default=''),
+        'USER': env('DBUSER', default=''),
+        'PASSWORD': env('DBPASSWORD', default=''),
+        'HOST': env('DBHOST', default=''),
+        'PORT': env('DBPORT', default=''),
     }
 }
 
 
 def get_database_config():
     # Choose backend key from environment variable, default sqlite for tests
-    backend = 'sqlite' if env.bool('USE_SQLITE', default=False) else 'postgres'
+    backend = 'sqlite' if env.bool('USE_SQLITE', default=True) else 'postgres'
     return {'default': DB_BACKENDS[backend]}
