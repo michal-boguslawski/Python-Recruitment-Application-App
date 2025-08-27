@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import environ
 import os
+from apps.config.db import get_database_config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -82,17 +83,7 @@ WSGI_APPLICATION = 'RecrApp.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('DBNAME'),
-        'USER': env('DBUSER'),
-        'PASSWORD': env('DBPASSWORD'),
-        'HOST': env('DBHOST'),
-        'PORT': env('DBPORT')
-    }
-}
-
+DATABASES = get_database_config()
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
