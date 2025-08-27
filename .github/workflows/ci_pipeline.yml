@@ -4,6 +4,11 @@ on: [push, pull_request]
 
 env:
   SECRET_KEY: "django-insecure-u&+3c_-uwkww@=2q4h*)_0950xkn&jj80p*z@=5@hl+mwjrc$z"
+  DBHOST: "RecrAppDB"
+  DBUSER: "postgres"
+  DBNAME: "RecrAppDB"
+  DBPORT: "5432"
+  DBPASSWORD: "admin"
 
 jobs:
   lint:
